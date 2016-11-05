@@ -1,36 +1,91 @@
 var assert = require('assert');
-describe('Array', function () {
-    describe('#indexOf()', function () {
-        it('should return -1 when the value is not present', function () {
-            assert.equal(-1, [1, 2, 3].indexOf(4));
-        });
-    });
-});
-
-
 var supertest = require("supertest");
 var should = require("should");
+var mongoose = require('mongoose');
+var User = require('../models/user/user')
+var server = supertest.agent("http://localhost:3000");
+var user1 = {
+    username: "user1",
+    password: "user1",
+    email: "use@r1.com",
+    firstname: "dd",
+    lastname: "gh"
+};
 
-var app = require('../app');
+describe("create User", function () {
+    before(function (done) {
+        db = mongoose.connect(require('../config/vars').mongoUrl);
+        User.findOneAndRemove({
+            username: user1.username
+        }, function (err) {
+            if (err)
+                console.log(err);
+        });
+        done();
+    });
 
-// UNIT test begin
-
-describe("test User",function(){
-
-
-
-    it("should return respond with a resource",function(done){
-
-
-        supertest(app)
-            .get("/user")
-            .expect("Content-type",/json/)
+    after(function (done) {
+        mongoose.connection.close();
+        done();
+    });
+    it("register user", function (done) {
+        server
+            .post('/user/register')
+            .send(user1)
+            .expect("Content-type", /json/)
             .expect(200)
-            .end(function(err,res){
+            .end(function (err, res) {
                 res.status.should.equal(200);
-                res.text.should.equal('respond with a resource');
+                res.body.success.should.equal(true);
                 done();
             });
     });
+});
+
+describe("create User", function () {
+    before(function (done) {
+        db = mongoose.connect(require('../config/vars').mongoUrl);
+        User.findOneAndRemove({
+            username: user1.username
+        }, function (err) {
+            if (err)
+                console.log(err);
+        });
+        done();
+    });
+
+    after(function (done) {
+        mongoose.connection.close();
+        done();
+    });
+    it("register user", function (done) {
+        server
+            .post('/user/register')
+            .send(user1)
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+                res.body.success.should.equal(true);
+                done();
+            });
+    });
+});
+
+describe("login User", function () {
+    it("login User", function (done) {
+        server
+            .post('/user/login')
+            .send(user1)
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+                res.body.success.should.equal(true);
+                res.body.token.should.type('string');
+                done();
+            });
+    });
+
 
 });
