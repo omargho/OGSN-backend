@@ -11,9 +11,7 @@ describe('Array', function () {
 var supertest = require("supertest");
 var should = require("should");
 
-// This agent refers to PORT where program is runninng.
-
-var server = supertest.agent("http://localhost:3000");
+var app = require('../app');
 
 // UNIT test begin
 
@@ -24,7 +22,7 @@ describe("test User",function(){
     it("should return respond with a resource",function(done){
 
 
-        server
+        supertest(app)
             .get("/user")
             .expect("Content-type",/json/)
             .expect(200)
