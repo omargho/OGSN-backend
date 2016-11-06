@@ -24,8 +24,8 @@ router.get('/', jwt.verifyUser, function (req, res) {
             res.send(err);
         }
         Post.find({
-                postedBy: {$in: user.following}
-            }).limit(10).skip(0).sort({ updatedAt: -1 }).exec(
+            postedBy: {$in: user.following}
+        }).limit(10).skip(0).sort({updatedAt: -1}).exec(
             function (err, posts) {
                 if (err)
                     res.status(500).send(err);
