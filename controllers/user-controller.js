@@ -39,7 +39,7 @@ router.post('/login', function (req, res, next) {
 
             var token = jwt.getToken(user);
             res.status(200).json({
-                status: 'Login successful!',
+                id: user.id,
                 success: true,
                 token: token
             });
