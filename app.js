@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // passport config
 require("./config/passport")(app)
 
-
+//routing
 router.forEach(ctr => app.use(ctr.path, ctr.controller));
 
 // catch 404 and forward to error handler
