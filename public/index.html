@@ -4,17 +4,17 @@
 <title>Node Socket</title>
 <script src="./javascripts/socket.io.js"></script>
 <script>
-    var socket = io.connect('http://192.168.1.7:3000/');
-    socket.emit('id', Math.floor(Math.random() * 20) + 1 );
-    socket.on('clients', function(message) {
+    var socket = io.connect('http://192.168.1.6:3000/');
+    socket.emit('id', Math.floor(Math.random() * 20) + 1);
+    socket.on('clients', function (message) {
         console.log(message);
     });
 
-    socket.on('chat message', function(message) {
+    socket.on('chat message', function (message) {
         alert('Le serveur a un message pour vous : ' + message);
-    })
+    });
 
-    socket.emit('chat message', "hello");
+    socket.emit('privateMessage', '{"a":"aaa","b":"bbb"}');
 </script>
 <body>
 <h1>testttt</h1>

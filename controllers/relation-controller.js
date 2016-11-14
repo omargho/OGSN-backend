@@ -18,13 +18,13 @@ router.post('/follow', jwt.verifyUser, function (req, res) {
                 if (err) {
                     res.send(err);
                 }
-
-                user.followers.push(req.decoded.id);
-                user.save(function (err, user) {
-                    if (err)
-                        return res.status(500).json(err);
-                });
-
+                if (user) {
+                    user.followers.push(req.decoded.id);
+                    user.save(function (err, user) {
+                        if (err)
+                            return res.status(500).json(err);
+                    });
+                }
             });
             res.json({success: true});
         });
