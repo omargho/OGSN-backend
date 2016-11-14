@@ -18,7 +18,7 @@ var user2 = {
     firstname: "dd",
     lastname: "gh"
 };
-
+var post={};
 describe("create User", function () {
     before(function (done) {
         db = mongoose.connect(require('../config/vars').mongoUrl);
@@ -62,8 +62,8 @@ describe("login User 1", function () {
                 res.status.should.equal(200);
                 res.body.success.should.equal(true);
                 res.body.token.should.type('string');
-                user1.token=res.body.token;
-                user1.id=res.body.id;
+                user1.token = res.body.token;
+                user1.id = res.body.id;
                 done();
             });
     });
@@ -113,8 +113,8 @@ describe("login User 1", function () {
                 res.status.should.equal(200);
                 res.body.success.should.equal(true);
                 res.body.token.should.type('string');
-                user2.token=res.body.token;
-                user2.id=res.body.id;
+                user2.token = res.body.token;
+                user2.id = res.body.id;
                 done();
             });
     });
@@ -128,12 +128,14 @@ describe("user posting", function () {
         server
             .post('/post')
             .set('x-access-token', user1.token)
-            .send({"text":"ping ping"})
+            .send({"text": "ping ping"})
             .expect("Content-type", /json/)
             .expect(200)
             .end(function (err, res) {
                 res.status.should.equal(200);
                 res.body.text.should.equal("ping ping");
+                if (res.body._id)
+                    post.id = res.body._id;
                 done();
             });
     });
@@ -141,13 +143,43 @@ describe("user posting", function () {
 
 });
 
+describe("user update post", function () {
+    it("user update post", function (done) {
+        server.put('/post/'+post.id)
+            .set('x-access-token', user1.token)
+            .send({"text": "ping"})
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+                res.body.text.should.equal("ping");
+                done();
+            });
+    });
+});
+
+describe("user 2 try to update post of user1", function () {
+    it("not authorized", function (done) {
+        server.put('/post/'+post.id)
+            .set('x-access-token', user2.token)
+            .send({"text": "ping"})
+            .expect("Content-type", /json/)
+            .expect(403)
+            .end(function (err, res) {
+                res.status.should.equal(403);
+                done();
+            });
+    });
+});
+
+
 describe("user follow", function () {
     it("user follow", function (done) {
 
         server
             .post('/relation/follow')
             .set('x-access-token', user2.token)
-            .send({"followingId":user1.id})
+            .send({"followingId": user1.id})
             .expect("Content-type", /json/)
             .expect(200)
             .end(function (err, res) {

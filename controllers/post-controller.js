@@ -8,8 +8,8 @@ router.post('/', jwt.verifyUser, function (req, res) {
     var data = req.body;
     data["postedBy"] = req.decoded.id;
     Post(data).save().then(function (post) {
-            return res.send(post);
-        })
+        return res.send(post);
+    })
         .catch(function (err) {
             if (err) {
                 console.log(err);
@@ -32,8 +32,30 @@ router.get('/', jwt.verifyUser, function (req, res) {
                 res.send(posts);
             })
     })
-})
-;
+});
+
+router.put('/:postId', jwt.verifyUser, function (req, res) {
+    Post.findById(req.params.postId, function (err, post) {
+        if (err) {
+            res.send(err);
+        }
+        if (post.postedBy != req.decoded.id) {
+            var err = new Error('You are not authorized to perform this operation!');
+            res.status(403).send(err);
+            return ;
+        }
+        if (req.body.text)
+            post.text = req.body.text;
+        if (req.body.picture)
+            post.picture = req.body.picture;
+
+        post.save(function (err, post) {
+            if (err)
+                res.send(err);
+            res.json(post);
+        });
+    });
+});
 
 
 module.exports = router;
