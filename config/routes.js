@@ -5,6 +5,4 @@ module.exports = [
     {path: '/user', controller: userController},
     {path: '/post', controller: postController},
     {path: '/relation', controller: relationController}
-
-
 ];

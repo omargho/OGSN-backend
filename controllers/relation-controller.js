@@ -7,16 +7,16 @@ var jwt = require('../config/jwt');
 router.post('/follow', jwt.verifyUser, function (req, res) {
     User.findById(req.decoded.id, function (err, user) {
         if (err) {
-            res.send(err);
+            return res.status(500).send(err);
         }
         if (req.body.followingId)
             user.following.push(req.body.followingId);
         user.save(function (err, user) {
             if (err)
-                return res.status(500).json(err);
+                return res.status(500).send(err);
             User.findById(req.body.followingId, function (err, user) {
                 if (err) {
-                    res.send(err);
+                    return res.status(500).send(err);
                 }
                 if (user) {
                     user.followers.push(req.decoded.id);

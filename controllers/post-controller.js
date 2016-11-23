@@ -13,7 +13,7 @@ router.post('/', jwt.verifyUser, function (req, res) {
         .catch(function (err) {
             if (err) {
                 console.log(err);
-                return res.send(err);
+                return res.status(500).send(err);
             }
         });
 });
@@ -21,14 +21,14 @@ router.post('/', jwt.verifyUser, function (req, res) {
 router.get('/', jwt.verifyUser, function (req, res) {
     User.findById(req.decoded.id, function (err, user) {
         if (err) {
-            res.send(err);
+            return res.status(500).send(err);
         }
         Post.find({
             postedBy: {$in: user.following}
         }).limit(10).skip(0).sort({updatedAt: -1}).exec(
             function (err, posts) {
                 if (err)
-                    res.status(500).send(err);
+                    return res.status(500).send(err);
                 res.send(posts);
             })
     })
@@ -37,12 +37,11 @@ router.get('/', jwt.verifyUser, function (req, res) {
 router.put('/:postId', jwt.verifyUser, function (req, res) {
     Post.findById(req.params.postId, function (err, post) {
         if (err) {
-            res.send(err);
+            return res.status(500).send(err);
         }
         if (post.postedBy != req.decoded.id) {
             var err = new Error('You are not authorized to perform this operation!');
-            res.status(403).send(err);
-            return ;
+            return res.status(403).send(err);
         }
         if (req.body.text)
             post.text = req.body.text;

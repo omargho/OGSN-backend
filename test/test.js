@@ -19,6 +19,7 @@ var user2 = {
     lastname: "gh"
 };
 var post={};
+
 describe("create User", function () {
     before(function (done) {
         db = mongoose.connect(require('../config/vars').mongoUrl);
@@ -70,7 +71,7 @@ describe("login User 1", function () {
 
 
 });
-describe("create User", function () {
+describe("create User 2", function () {
     before(function (done) {
         db = mongoose.connect(require('../config/vars').mongoUrl);
         User.findOneAndRemove({
@@ -101,8 +102,8 @@ describe("create User", function () {
 });
 
 
-describe("login User 1", function () {
-    it("login User", function (done) {
+describe("login User 2", function () {
+    it("login User 2", function (done) {
 
         server
             .post('/user/login')
@@ -122,8 +123,8 @@ describe("login User 1", function () {
 
 });
 
-describe("user posting", function () {
-    it("user posting", function (done) {
+describe("user 1 posting", function () {
+    it("user 1 posting", function (done) {
 
         server
             .post('/post')
@@ -143,8 +144,8 @@ describe("user posting", function () {
 
 });
 
-describe("user update post", function () {
-    it("user update post", function (done) {
+describe("user 1 update post", function () {
+    it("user 1 update post", function (done) {
         server.put('/post/'+post.id)
             .set('x-access-token', user1.token)
             .send({"text": "ping"})
@@ -173,7 +174,7 @@ describe("user 2 try to update post of user1", function () {
 });
 
 
-describe("user follow", function () {
+describe("user 2 follow user 1 ", function () {
     it("user follow", function (done) {
 
         server
@@ -192,8 +193,8 @@ describe("user follow", function () {
 
 });
 
-describe("user get posts", function () {
-    it("user get posts", function (done) {
+describe("user 2 get posts", function () {
+    it("user 2 get posts", function (done) {
 
         server
             .get('/post')
