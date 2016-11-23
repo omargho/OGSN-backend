@@ -5,14 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var neo4j = require('neo4j-driver').v1;
 
-
-var router = require('./config/routes');
-var vars = require('./config/vars')
+var vars = require('./config/vars');
 
 var app = express();
 
-
+//mongoose connection
 mongoose.connect(vars.mongoUrl);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -20,6 +19,10 @@ db.once('open', function () {
     // we're connected!
     console.log("Connected correctly to db");
 });
+
+//neo4j connection
+var driver = neo4j.driver(vars.neo4jUrl, neo4j.auth.basic(vars.neo4jUser, vars.neo4jPass));
+var session = driver.session();
 
 
 // view engine setup
@@ -35,12 +38,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // passport config
-require("./config/passport")(app)
+require("./config/passport")(app);
 
 //routing
-router.forEach(function (ctr) {
-    app.use(ctr.path, ctr.controller);
-});
+require('./config/routes')(app,session);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
