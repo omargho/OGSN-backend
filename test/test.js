@@ -18,7 +18,7 @@ var user2 = {
     firstname: "dd",
     lastname: "gh"
 };
-var post={};
+var post = {};
 
 describe("create User", function () {
     before(function (done) {
@@ -146,7 +146,7 @@ describe("user 1 posting", function () {
 
 describe("user 1 update post", function () {
     it("user 1 update post", function (done) {
-        server.put('/post/'+post.id)
+        server.put('/post/' + post.id)
             .set('x-access-token', user1.token)
             .send({"text": "ping"})
             .expect("Content-type", /json/)
@@ -161,7 +161,7 @@ describe("user 1 update post", function () {
 
 describe("user 2 try to update post of user1", function () {
     it("not authorized", function (done) {
-        server.put('/post/'+post.id)
+        server.put('/post/' + post.id)
             .set('x-access-token', user2.token)
             .send({"text": "ping"})
             .expect("Content-type", /json/)
@@ -174,13 +174,68 @@ describe("user 2 try to update post of user1", function () {
 });
 
 
-describe("user 2 follow user 1 ", function () {
-    it("user follow", function (done) {
+describe("user 2 send friend request to user 1 ", function () {
+    it("request sended", function (done) {
 
         server
-            .post('/relation/follow')
+            .post('/relation/request')
             .set('x-access-token', user2.token)
-            .send({"followingId": user1.id})
+            .send({"friendId": user1.id})
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+                res.body.success.should.equal(true);
+                done();
+            });
+    });
+
+
+});
+
+describe("user 1 ignore friend request of user 2", function () {
+    it("request ignored", function (done) {
+
+        server
+            .delete('/relation/request')
+            .set('x-access-token', user1.token)
+            .send({"friendId": user2.id})
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+                res.body.success.should.equal(true);
+                done();
+            });
+    });
+
+
+});
+
+describe("user 1 send friend request to user 2 ", function () {
+    it("request sended", function (done) {
+        server
+            .post('/relation/request')
+            .set('x-access-token', user1.token)
+            .send({"friendId": user2.id})
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+                res.body.success.should.equal(true);
+                done();
+            });
+    });
+
+
+});
+describe("user 2 accept user 1 as a friend", function () {
+    it("friendship accepted", function (done) {
+
+        server
+            .post('/relation/friend')
+            .set('x-access-token', user2.token)
+            .send({"friendId": user1.id})
             .expect("Content-type", /json/)
             .expect(200)
             .end(function (err, res) {
@@ -195,7 +250,6 @@ describe("user 2 follow user 1 ", function () {
 
 describe("user 2 get posts", function () {
     it("user 2 get posts", function (done) {
-
         server
             .get('/post')
             .set('x-access-token', user2.token)
@@ -208,6 +262,33 @@ describe("user 2 get posts", function () {
                 done();
             });
     });
-
-
+});
+describe("user 2 get posts", function () {
+    it("user 2 get posts", function (done) {
+        server
+            .get('/relation/friend')
+            .set('x-access-token', user2.token)
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+              //  res.body.should.be.an.Array();
+                done();
+            });
+    });
+});
+describe("user 2 remove user1 from the list of his friends", function () {
+    it("friendship removed", function (done) {
+        server
+            .delete('/relation/friend')
+            .set('x-access-token', user2.token)
+            .send({"friendId": user1.id})
+            .expect("Content-type", /json/)
+            .expect(200)
+            .end(function (err, res) {
+                res.status.should.equal(200);
+                res.body.success.should.equal(true);
+                done();
+            });
+    });
 });

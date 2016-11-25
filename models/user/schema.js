@@ -23,15 +23,15 @@ var Schema = new mongoose.Schema({
         type: String,
         required: true
     },
-    picture:{
-        type:String
+    picture: {
+        type: String
     },
-    following: [{
+    friends: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
     ],
-    followers: [{
+    friendshipRequest: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }

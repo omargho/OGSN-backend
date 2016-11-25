@@ -23,8 +23,11 @@ router.get('/', jwt.verifyUser, function (req, res) {
         if (err) {
             return res.status(500).send(err);
         }
+        if (!user)
+            return res.status(400).send(new Error("user does not exist anymore"));
+
         Post.find({
-            postedBy: {$in: user.following}
+            postedBy: {$in: user.friends}
         }).limit(10).skip(0).sort({updatedAt: -1}).exec(
             function (err, posts) {
                 if (err)
@@ -39,6 +42,9 @@ router.put('/:postId', jwt.verifyUser, function (req, res) {
         if (err) {
             return res.status(500).send(err);
         }
+        if (!post)
+            return res.status(400).send(new Error("post does not exist anymore"));
+
         if (post.postedBy != req.decoded.id) {
             var err = new Error('You are not authorized to perform this operation!');
             return res.status(403).send(err);

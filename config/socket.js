@@ -6,7 +6,7 @@ module.exports = function (io) {
             connectedSockets[id] = socket;
             connectedUsers.push(id);
             console.log(id, '  connected');
-        })
+        });
 
         socket.on('chat message', function (msg) {
             io.emit('chat message', socket.id + ' say ' + msg);
