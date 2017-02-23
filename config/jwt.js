@@ -20,7 +20,7 @@ exports.verifyUser = function (req, res, next) {
                 var error = new Error('You are not authenticated!');
                 error.status = 401;
                 next(error);
-            } else {
+            } else {//
                 // if everything is good, save to request for use in other routes
 
                 req.decoded = decoded;
