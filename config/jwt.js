@@ -26,7 +26,7 @@ exports.verifyUser = function (req, res, next) {
                 req.decoded = decoded;
                 next();
             }
-        });
+        });//
     } else {
         // if there is no token
         // return an error
